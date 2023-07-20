@@ -1,24 +1,37 @@
 #!/usr/bin/env node
 
 process.env.GENERATE_CLI = true;
-process.on('exit', function() {
+process.on('exit', () => {
   require('set-blocking')(true);
 });
 
-var util = require('util');
-var Verb = require('..');
-var commands = require('../lib/commands');
-var tasks = require('../lib/tasks');
-var utils = require('../lib/utils');
-var args = process.argv.slice(2);
-var argv = require('yargs-parser')(args);
+const util = require('util');
+const Verb = require('..');
+const commands = require('../lib/commands');
+const tasks = require('../lib/tasks');
+const utils = require('../lib/utils');
+const args = process.argv.slice(2);
+const argv = require('yargs-parser')(args);
+
+/**
+ * Handle errors
+ */
+
+const handleErr = (app, err) => {
+  if (app && app.base.hasListeners('error')) {
+    app.base.emit('error', err);
+  } else {
+    console.log(err.stack);
+    process.exit(1);
+  }
+};
 
 /**
  * Listen for errors on all instances
  */
 
-Verb.on('generate.preInit', function(app) {
-  app.on('error', function(err) {
+Verb.on('generate.preInit', app => {
+  app.on('error', err => {
     console.log(err.stack);
     process.exit(1);
   });
@@ -28,18 +41,18 @@ Verb.on('generate.preInit', function(app) {
  * Initialize CLI
  */
 
-Verb.on('generate.postInit', function(app) {
+Verb.on('generate.postInit', app => {
   if (app.macros.has(args)) {
     app.macros.set(args);
-    var macro = {};
+    const macro = {};
     macro[args[0]] = args.slice(2).join(' ');
     console.log('saved macro:', util.inspect(macro));
     process.exit();
   }
 
-  var idx = utils.firstIndex(args, ['-D', '--default']);
+  const idx = utils.firstIndex(args, ['-D', '--default']);
   if (idx !== -1) {
-    var del = args.indexOf('--del') !== -1;
+    const del = args.indexOf('--del') !== -1;
     if (del) {
       app.base.store.del('defaultTask');
     } else {
@@ -53,9 +66,9 @@ Verb.on('generate.postInit', function(app) {
  * Initialize Runner
  */
 
-var options = {name: 'verb'};
+const options = { name: 'verb' };
 
-utils.runner(Verb, options, argv, function(err, app, runnerContext) {
+utils.runner(Verb, options, argv, (err, app, runnerContext) => {
   if (err) handleErr(app, err);
 
   app.set('cache.runnerContext', runnerContext);
@@ -65,36 +78,23 @@ utils.runner(Verb, options, argv, function(err, app, runnerContext) {
     app.register('defaults', require('../lib/generator'));
   }
 
-  var ctx = utils.extend({}, runnerContext);
-  var config = app.get('cache.config') || {};
+  const ctx = utils.extend({}, runnerContext);
+  const config = app.get('cache.config') || {};
   ctx.argv.tasks = [];
 
-  app.config.process(config, function(err, config) {
+  app.config.process(config, (err, config) => {
     if (err) return handleErr(app, err);
 
     app.base.cache.config = config;
 
-    app.cli.process(ctx.argv, function(err) {
+    app.cli.process(ctx.argv, err => {
       if (err) return handleErr(app, err);
 
-      var arr = tasks(app, ctx, argv);
+      const arr = tasks(app, ctx, argv);
       app.log.success('running tasks:', arr);
-      app.generate(arr, function(err) {
+      app.generate(arr, err => {
         if (err) handleErr(app, err);
       });
     });
   });
 });
-
-/**
- * Handle errors
- */
-
-function handleErr(app, err) {
-  if (app && app.base.hasListeners('error')) {
-    app.base.emit('error', err);
-  } else {
-    console.log(err.stack);
-    process.exit(1);
-  }
-}
