@@ -1,12 +1,12 @@
 'use strict';
 
-var gulp = require('gulp');
-var mocha = require('gulp-mocha');
-var istanbul = require('gulp-istanbul');
-var eslint = require('gulp-eslint');
-var unused = require('gulp-unused');
+const gulp = require('gulp');
+const mocha = require('gulp-mocha');
+const istanbul = require('gulp-istanbul');
+const eslint = require('gulp-eslint');
+const unused = require('gulp-unused');
 
-var lib = ['index.js', 'lib/**/*.js', 'bin/*.js'];
+const lib = ['index.js', 'lib/**/*.js', 'bin/*.js'];
 
 gulp.task('coverage', function() {
   return gulp.src(lib)
@@ -28,7 +28,7 @@ gulp.task('lint', function() {
 
 gulp.task('unused', function() {
   return gulp.src(['index.js', 'lib/**/*.js', 'bin/*.js'])
-    .pipe(unused({keys: Object.keys(require('./lib/utils.js'))}))
+    .pipe(unused({keys: Object.keys(require('./lib/utils.js'))}));
 });
 
 gulp.task('default', ['test', 'lint']);
