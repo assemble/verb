@@ -1,8 +1,10 @@
 # always ignore files
-*.DS_Store
 *.sublime-*
 *.code-*
 *.log
+.DS_Store
+.env
+.env.*
 
 # always ignore dirs
 temp

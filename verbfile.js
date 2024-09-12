@@ -1,20 +1,20 @@
 'use strict';
 
-var through = require('through2');
-var reflinks = require('gulp-reflinks');
-var format = require('gulp-format-md');
-var utils = require('./lib/utils');
+const through = require('through2');
+const reflinks = require('gulp-reflinks');
+const format = require('gulp-format-md');
+const utils = require('./lib/utils');
 
 module.exports = function(app) {
   app.use(require('verb-generate-readme'));
 
   app.task('docs', ['setup'], function(cb) {
     app.layouts('docs/src/templates/layouts/*.md');
-    return app.src('docs/src/*.md', {layout: 'default'})
+    return app.src('docs/src/*.md', { layout: 'default' })
       .pipe(app.renderFile('*'))
       .pipe(reflinks())
       .pipe(format())
-      .pipe(app.dest('docs'))
+      .pipe(app.dest('docs'));
   });
 
   app.task('default', ['readme'], function() {

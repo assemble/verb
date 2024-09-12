@@ -5,5 +5,5 @@
 ## Usage
 
 ```js
-var {%= varname %} = require('<%= name %>');
+import {%= varname %} from '<%= name %>';
 ```

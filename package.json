@@ -19,7 +19,7 @@
   "main": "index.js",
   "preferGlobal": true,
   "bin": {
-    "v": "bin/verb.js"
+    "verb": "bin/verb.js"
   },
   "engines": {
     "node": ">=0.10.0"
@@ -70,7 +70,7 @@
     "generate-foo": "^0.1.5",
     "generator-util": "^0.2.9",
     "graceful-fs": "^4.1.5",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-eslint": "^3.0.1",
     "gulp-istanbul": "^1.0.0",
     "gulp-mocha": "^2.2.0",

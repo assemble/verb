@@ -1,5 +1,5 @@
 ## Usage
 
 ```js
-var {%= alias %} = require('{%= name %}');
+import {%= alias %} from '{%= name %}';
 ```
